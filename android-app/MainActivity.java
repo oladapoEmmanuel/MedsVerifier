@@ -56,13 +56,14 @@ public class MainActivity extends AppCompatActivity {
         // Sync all manufacturer public keys from blockchain when app starts
         syncKeysFromBlockchain();
     }
+
+    // Verifiy product data
     private void verifyProductData(String qrContent) {
 
         // Extract manufacturer name and signature from QR code
         String manufacturerName = retrieveProductField(qrContent, "Manufacturer");
         String signature = retrieveProductField(qrContent, "SIG");
 
-        // Product data is everything before the signature
         String productData = qrContent;
         int sigIndex = qrContent.lastIndexOf("|SIG:");
         if (sigIndex != -1) {
@@ -152,6 +153,8 @@ public class MainActivity extends AppCompatActivity {
 
         }).start();
     }
+
+    // Verifiy signature helper method
     private boolean verifySignature(String productData, String signatureStr, String publicKeyStr) throws Exception {
         byte[] publicKeyBytes = Base64.decode(publicKeyStr, Base64.DEFAULT);
         X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicKeyBytes);
