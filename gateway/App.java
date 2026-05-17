@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 public class App {
 
+    // Configuration constants for the Fabric network and the gateway
     private static final String MSP_ID = "Org1MSP";
     private static final String CHANNEL_NAME = "pharmachannel";
     private static final String CHAINCODE_NAME = "pharmacc";
@@ -38,6 +39,7 @@ public class App {
     private static Gateway gateway;
     private static Contract contract;
 
+    // Main method to initialize the application gateway
     public static void main(String[] args) throws Exception {
         System.out.println("Connecting to Fabric...");
         ManagedChannel channel = newGrpcConnection();
@@ -66,6 +68,7 @@ public class App {
         System.out.println("Server running at http://localhost:8080");
     }
 
+    // Create a new gRPC connection to the peer with TLS
     private static ManagedChannel newGrpcConnection() throws IOException {
         var credentials = TlsChannelCredentials.newBuilder()
             .trustManager(TLS_CERT_PATH.toFile()).build();
@@ -73,24 +76,28 @@ public class App {
             .overrideAuthority(OVERRIDE_AUTH).build();
     }
 
+    // Create a new identity from the certificate file
     private static Identity newIdentity() throws IOException, CertificateException {
         try (var r = Files.newBufferedReader(getFirstFilePath(CERT_DIR))) {
             return new X509Identity(MSP_ID, Identities.readX509Certificate(r));
         }
     }
 
+    // Create a new signer from the private key file
     private static Signer newSigner() throws IOException, InvalidKeyException {
         try (var r = Files.newBufferedReader(getFirstFilePath(KEY_DIR))) {
             return Signers.newPrivateKeySigner(Identities.readPrivateKey(r));
         }
     }
 
+    // Get the first file path from a directory
     private static Path getFirstFilePath(Path dir) throws IOException {
         try (var files = Files.list(dir)) {
             return files.findFirst().orElseThrow();
         }
     }
 
+    // Helper method to send HTTP responses
     private static void sendResponse(HttpExchange e, String response) throws IOException {
         e.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
         byte[] rb = response.getBytes(StandardCharsets.UTF_8);
@@ -99,6 +106,7 @@ public class App {
         e.getResponseBody().close();
     }
 
+    // Handler for GET /getKey by manufacturerID
     static class GetKeyHandler implements HttpHandler {
         public void handle(HttpExchange e) throws IOException {
             String query = e.getRequestURI().getQuery();
@@ -116,6 +124,7 @@ public class App {
         }
     }
 
+    // Handler for POST /registerKey with manufacturerID and publicKey
     static class RegisterKeyHandler implements HttpHandler {
         public void handle(HttpExchange e) throws IOException {
             if (!e.getRequestMethod().equals("POST")) {
@@ -140,6 +149,7 @@ public class App {
         }
     }
 
+    // Handler for POST /registerManufacturer with manufacturerID
     static class RegisterManufacturerHandler implements HttpHandler {
         public void handle(HttpExchange e) throws IOException {
             if (!e.getRequestMethod().equals("POST")) {
@@ -162,6 +172,7 @@ public class App {
         }
     }
 
+    // Handler for POST /revokeManufacturer with manufacturerID
     static class RevokeManufacturerHandler implements HttpHandler {
         public void handle(HttpExchange e) throws IOException {
             if (!e.getRequestMethod().equals("POST")) {
@@ -184,6 +195,7 @@ public class App {
         }
     }
 
+    // Handler for GET /getManufacturerStatus by manufacturerID
     static class GetManufacturerStatusHandler implements HttpHandler {
         public void handle(HttpExchange e) throws IOException {
             String query = e.getRequestURI().getQuery();
@@ -201,6 +213,7 @@ public class App {
         }
     }
 
+      // Handler for GET /getAllKeys
     static class GetAllKeysHandler implements HttpHandler {
         public void handle(HttpExchange e) throws IOException {
             String response;
