@@ -12,6 +12,7 @@ import org.hyperledger.fabric.shim.ledger.QueryResultsIterator;
 @Default
 public final class AssetTransfer implements ContractInterface {
 
+    // Register manufacturer
     @Transaction(intent = Transaction.TYPE.SUBMIT)
     public String registerManufacturer(final Context ctx, final String manufacturerID) {
         String existingMfr = ctx.getStub().getStringState("MFR_" + manufacturerID);
@@ -23,6 +24,7 @@ public final class AssetTransfer implements ContractInterface {
         return "Manufacturer registered successfully: " + manufacturerID;
     }
 
+    // Revoke manufacturer
     @Transaction(intent = Transaction.TYPE.SUBMIT)
     public String revokeManufacturer(final Context ctx, final String manufacturerID) {
         String existingMfr = ctx.getStub().getStringState("MFR_" + manufacturerID);
@@ -37,6 +39,7 @@ public final class AssetTransfer implements ContractInterface {
         return "Manufacturer revoked: " + manufacturerID;
     }
 
+    // Get manufacturer status
     @Transaction(intent = Transaction.TYPE.EVALUATE)
     public String getManufacturerStatus(final Context ctx, final String manufacturerID) {
         String status = ctx.getStub().getStringState("MFR_" + manufacturerID);
@@ -44,6 +47,7 @@ public final class AssetTransfer implements ContractInterface {
         return status;
     }
 
+    // Register manufacturer public key
     @Transaction(intent = Transaction.TYPE.SUBMIT)
     public void registerKey(final Context ctx, final String manufacturerID, final String publicKey) {
         String status = ctx.getStub().getStringState("MFR_" + manufacturerID);
@@ -57,6 +61,7 @@ public final class AssetTransfer implements ContractInterface {
         System.out.println("Public key registered for: " + manufacturerID);
     }
 
+    // Get manufacturer public key
     @Transaction(intent = Transaction.TYPE.EVALUATE)
     public String getKey(final Context ctx, final String manufacturerID) {
         String govStatus = ctx.getStub().getStringState("MFR_" + manufacturerID);
@@ -68,6 +73,7 @@ public final class AssetTransfer implements ContractInterface {
         return publicKey;
     }
 
+    // Get all manufacturer public keys
     @Transaction(intent = Transaction.TYPE.EVALUATE)
     public String getAllKeys(final Context ctx) {
         StringBuilder result = new StringBuilder("[");
